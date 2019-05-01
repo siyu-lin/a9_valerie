@@ -41,14 +41,16 @@ public class ProcessImage{
 
     public void writeImg(String filename, Color[][] img)throws IOException{
   	PrintWriter out = new PrintWriter(filename);
-   	out.println("P3 ");
-  	out.println(img.length + " " + img[0].length + "\n" + "255");
+   	out.println("P3");
+  	out.println(img.length + " " + img[0].length);
+  	out.println(255);
   	for (int i = 0; i < img.length; i++) {
   	    for (int j = 0; j < img[i].length; j++) {
   		//System.out.println(img[i][j].getR() + " " + img[i][j].getG() + " " + img[i][j].getB() + " ");
-  		out.print(img[i][j].getR() + " " + img[i][j].getG() + " " + img[i][j].getB() + " ");
+  			out.println(img[i][j].getR());
+  	   	 	out.println(img[i][j].getG());
+  	    	out.println(img[i][j].getB());
   	    }
-  	    out.println();
   	}
 	out.close();
     }

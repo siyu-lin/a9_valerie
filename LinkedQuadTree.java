@@ -135,8 +135,8 @@ public class LinkedQuadTree{
       compressed = new Color[img.length][img[0].length];
       for(int i = 0; i < img.length; i ++){
          for(int j = 0; j < img[i].length; j ++){
-	     compressed[i][j] = img[i][j];
-	 }
+	         compressed[i][j] = img[i][j];
+	       }
       }
     }
 
@@ -146,7 +146,7 @@ public class LinkedQuadTree{
      *@param root The Node with the Rectangle whose averages are being computed
      *@return A Double array of the various averages
      */
-    public double[] average(Node root){
+  public double[] average(Node root){
 
 	//initialize the average red, blue, and green color values
 	double averageR = 0.0;
@@ -181,17 +181,17 @@ public class LinkedQuadTree{
 	average[2] = averageG / size;
 	average[3] = averageB / size;
 	//Compute mean Rectangle error
-  int sum = 0;
+  double sum = 0;
 	for (int i = rootRectangle.getX(); i< width; i++) {
 	    for (int j = rootRectangle.getY(); j < length; j++) {
-		sum += Math.pow(img[i][j].getR() - averageR, 2) +
-		    Math.pow(img[i][j].getG() - averageG, 2) +
-		    Math.pow(img[i][j].getB() - averageB, 2);
+		    sum += Math.pow(img[i][j].getR() - averageR, 2) +
+		           Math.pow(img[i][j].getG() - averageG, 2) +
+		           Math.pow(img[i][j].getB() - averageB, 2);
 	    }
 	}
   average[0] = sum / size;
 	return average;
-    }
+  }
 
     /**Recursively compresses a Rectangle by finding areas of similar colors
      *and combining them so that they are the same color.
@@ -200,6 +200,7 @@ public class LinkedQuadTree{
 
      public void compress(){
        compressRec(root);
+       System.out.println(ctr);
      }
 
 
@@ -207,24 +208,34 @@ public class LinkedQuadTree{
         if(isPixel(root)) return;
 	//get the average color values of the given Rectangle,
 	//as well as the mean error
-	double[] average = average(root);
-  	if( average[0] < 100 ){
+	  double[] average = average(root);
+  	if( average[0] < 4000 ){
 	    // Compress all pixels under this root
   	    int x = root.getElement().getX();
   	    int y = root.getElement().getY();
-	    int width = root.getElement().getWidth() + x;
-            int length = root.getElement().getLength() + y;
+	      int end_x = root.getElement().getWidth() + x;
+        int end_y = root.getElement().getLength() + y;
+        //System.out.println("Successfully Compress: Row: [" + x + "," + end_x +  "], Col: [" + 
+          //                                                   y + "," + end_y + "]");
+        Color c = new Color((int)Math.round(average[1]),(int)Math.round(average[2]),(int)Math.round(average[3]));
+        // Below tries to change the color to make the compression part more visible
+        // Color c = new Color((int)Math.round(average[2]),(int)Math.round(average[3]),(int)Math.round(average[1]));
 
-            for(int i = x; i < width; i++){
-              for(int j = y; j < length; j++){
-                compressed[i][j] = new Color((int)Math.round(average[1]),
-		    	                     (int)Math.round(average[2]),
-			                     (int)Math.round(average[3]));
-                ctr++;
-              }
-            }
+        for(int i = x; i < end_x; i++){
+          for(int j = y; j < end_y; j++){
+            System.out.println("Setting (" + i + "," + j + ") to Color: (" + c.getR() + "," + c.getG() + "," + c.getB() + ")" );
+            compressed[i][j] = c;
+            ctr++;
+          }
+        }
       } else {
 	   // Check whether need to compress the children
+           int x = root.getElement().getX();
+           int y = root.getElement().getY();
+           int width = root.getElement().getWidth() + x;
+           int length = root.getElement().getLength() + y;
+           //System.out.println("Dividing: Row: [" + x + "," + width +  "], Col: [" + 
+                       //                            y + "," + length + "]");
            setChildren(root);
            compressRec(root.getNW());
            compressRec(root.getNE());
